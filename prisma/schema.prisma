@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// User Model
+
+model User {
+  id               Int       @id @default(autoincrement())
+  name             String
+  email            String    @unique
+  password         String
+  role             Role
+  deliveriesClient Delivery[] @relation("ClientDeliveries")
+  deliveriesDriver Delivery[] @relation("DriverDeliveries")
+  trackingEnabled  Boolean   @default(true) // driver-specific toggle for privacy
+}
+
+
+enum Role {
+  CLIENT
+  DRIVER
+  ADMIN
+}
+
+// Delivery Model 
+
+model Delivery {
+  id         Int      @id @default(autoincrement())
+  orderNumber String  @unique
+  status     DeliveryStatus
+  client     User     @relation("ClientDeliveries", fields: [clientId], references: [id])
+  clientId   Int
+  driver     User     @relation("DriverDeliveries", fields: [driverId], references: [id])
+  driverId   Int
+  eta        DateTime?
+  location   String?
+}
+
+// Settings Model
+
+model Settings {
+  id               Int      @id @default(autoincrement())
+  globalTrackingOn Boolean  @default(true)
+  updatedAt        DateTime @updatedAt
+}
+
+enum DeliveryStatus {
+  PENDING
+  IN_PROGRESS
+  DELIVERED
+  CANCELLED
+}

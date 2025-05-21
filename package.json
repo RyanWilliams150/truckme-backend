@@ -4,5 +4,11 @@
   "type": "module",
   "main": "api/index.js",
   "scripts": {},
-  "dependencies": {}
+  "devDependencies": {
+    "prisma": "^6.8.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.8.2",
+    "bcrypt": "^6.0.0"
+  }
 }
